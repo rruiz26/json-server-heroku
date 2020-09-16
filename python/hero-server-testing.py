@@ -13,7 +13,7 @@ dir =  os.getcwd()
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"\creds.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"/creds.json", scope)
 
 client = gspread.authorize(creds)
 
