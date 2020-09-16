@@ -7,11 +7,13 @@ Created on Tue Sep 15 13:30:19 2020
 
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import os
+dir =  os.getcwd()
 #from pprint import pprint  
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
-creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"\creds.json", scope)
 
 client = gspread.authorize(creds)
 
