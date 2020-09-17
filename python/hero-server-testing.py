@@ -30,7 +30,7 @@ sheet = client.open("Testing").sheet1
 
 insertRow = [user_id,first_name,last_name,gender,"This came from Heroku Server"]
 
-sheet.insert_row(insertRow,2)
+sheet.append_row(insertRow)
 
 
 # todo for project 
