@@ -26,7 +26,7 @@ scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/aut
 
 creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"/python/creds.json", scope)
 
-client = gspread.autahorize(creds)
+client = gspread.authorize(creds)
 
 sheet = client.open("Testing").sheet1
 
