@@ -30,7 +30,7 @@ client = gspread.autahorize(creds)
 
 sheet = client.open("Testing").sheet1
 
-insertRow = [" ",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
+insertRow = ["",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
 
 sheet.append_row(insertRow)
 
@@ -38,6 +38,3 @@ sheet.append_row(insertRow)
 # todo for project 
 
 #get this python code (with adaptive experminet code) to run when there is a post to the server 
-
-
-#notes on zapier integration make column/row called newest subsscriber
