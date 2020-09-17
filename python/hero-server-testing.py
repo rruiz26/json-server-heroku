@@ -17,8 +17,8 @@ with open("./db.json","r") as read_file:
 
 first_name = dict['users'][-1]['first name']
 last_name = dict['users'][-1]['last name']
-gender = dict['users'][-1]['gender']    
-
+gender = dict['users'][-1]['gender']
+user_id = dict['users'][-1]['messenger user id']    
     
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
@@ -28,9 +28,9 @@ client = gspread.authorize(creds)
 
 sheet = client.open("Testing").sheet1
 
-insertRow = [first_name,last_name,gender]
+insertRow = [user_id,first_name,last_name,gender,"This came from Heroku Server"]
 
-sheet.insert_row(insertRow,1)
+sheet.insert_row(insertRow,2)
 
 
 # todo for project 
