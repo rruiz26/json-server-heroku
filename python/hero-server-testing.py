@@ -30,7 +30,8 @@ client = gspread.authorize(creds)
 
 sheet = client.open("Testing").sheet1
 
-insertRow = ["",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
+#insertRow = ["",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
+insertRow = [user_id,first_name,last_name,gender,"This came from Heroku Server"]
 
 sheet.append_row(insertRow)
 
