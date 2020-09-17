@@ -19,8 +19,6 @@ first_name = dict['users'][-1]['first name']
 last_name = dict['users'][-1]['last name']
 gender = dict['users'][-1]['gender']
 user_id = str(dict['users'][-1]['messenger user id'])    
-firsthalf = user_id[0:8]
-secondhalf = user_id[8:]
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
@@ -30,12 +28,7 @@ client = gspread.authorize(creds)
 
 sheet = client.open("Testing").sheet1
 
-#insertRow = ["",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
 insertRow = [user_id,first_name,last_name,gender,"This came from Heroku Server"]
 
 sheet.append_row(insertRow)
 
-
-# todo for project 
-
-#get this python code (with adaptive experminet code) to run when there is a post to the server 
