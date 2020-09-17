@@ -232,7 +232,7 @@ module.exports = function (db, name, opts) {
     res.status(201);
     res.locals.data = resource;
 	
-	var ls = cp.spawn('python python/hero-server-testing.py');
+	cp.spawn('python', ['./python/hero-server-testing.py']);
     next();
   }
 
