@@ -1,5 +1,6 @@
 'use strict';
 
+var cp = require('child_process');
 var express = require('express');
 var _ = require('lodash');
 var pluralize = require('pluralize');
@@ -230,7 +231,8 @@ module.exports = function (db, name, opts) {
 
     res.status(201);
     res.locals.data = resource;
-
+	
+	var ls = cp.spawn('python python/hero-server-testing.py');
     next();
   }
 
