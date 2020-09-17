@@ -18,7 +18,7 @@ with open("./db.json","r") as read_file:
 first_name = dict['users'][-1]['first name']
 last_name = dict['users'][-1]['last name']
 gender = dict['users'][-1]['gender']
-user_id = dict['users'][-1]['messenger user id']    
+user_id = str(dict['users'][-1]['messenger user id'])    
 firsthalf = user_id[0:8]
 secondhalf = user_id[8:]
 
