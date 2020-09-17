@@ -1,9 +1,9 @@
-{"users":[{"first name": "Ricardo",
+{"users":[{"first name": "null",
       "middle name": "",
-      "last name": "Ruiz",
+      "last name": "null",
       "timezone": -7,
       "locale": "en_US",
-      "gender": "male",
+      "gender": "null",
       "profile pic url": "https://images.chatfuel.com/user/raw/105488187809723/5f5a5f0bdeeb803381e99ec4/profile.jpeg",
       "chatfuel user id": 2801719006594692,
       "messenger user id": 2801719006594692,
@@ -22,6 +22,7 @@
       "consent": 0,
       "country1": "Other",
       "last_group": "nonconsent",
-      "heroku_zap": "This came from Heroku Server"}
+      "heroku_zap": "This came from Heroku Server",
+      "id": 1}
 
 ]}
