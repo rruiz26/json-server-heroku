@@ -26,11 +26,11 @@ scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/aut
 
 creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"/python/creds.json", scope)
 
-client = gspread.authorize(creds)
+client = gspread.autahorize(creds)
 
 sheet = client.open("Testing").sheet1
 
-insertRow = ["",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
+insertRow = [" ",first_name,last_name,gender,"This came from Heroku Server",firsthalf,secondhalf]
 
 sheet.append_row(insertRow)
 
