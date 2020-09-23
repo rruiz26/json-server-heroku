@@ -1,14 +1,14 @@
 # init.R
 #
 # Example R code to install packages if not already installed
-#
 
-my_packages = c("grf")
+#my_packages = c("grf")
 
-install_if_missing = function(p) {
-  if (p %in% rownames(installed.packages()) == FALSE) {
+
+#install_if_missing = function(p) {
+ # if (p %in% rownames(installed.packages()) == FALSE) {
     install.packages(p)
-  }
-}
+  #}
+#}
 
-invisible(sapply(my_packages, install_if_missing))
+#invisible(sapply(my_packages, install_if_missing))
