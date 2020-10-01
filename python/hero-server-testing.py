@@ -12,6 +12,7 @@ from oauth2client.service_account import ServiceAccountCredentials
 import os
 dir =  os.getcwd()
 #from pprint import pprint  
+
 with open("./db.json","r") as read_file:
     dict = json.load(read_file)
 
