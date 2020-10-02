@@ -3,7 +3,7 @@
 K: 40
 # Number of covariates
 #p: 80
-p: 2 #
+p: 76
 # Gaussian noise to rewards
 noise_std: 1
 # Control INDEX
