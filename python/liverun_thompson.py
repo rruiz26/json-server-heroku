@@ -20,7 +20,7 @@ client = gspread.authorize(creds)
 
 sheet = client.open("Testing").sheet1
 
-full_dataset = client.open("Testing").worksheet("sheet2")
+full_dataset = client.open("Testing").worksheet("Sheet2")
 
 pt = importr("policytree")
 grf = importr("grf")
