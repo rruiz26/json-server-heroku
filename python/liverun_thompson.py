@@ -588,10 +588,10 @@ if responded == 0 :
     # Send `wt` as a treatment assignment back to chatfuel as an attribute
 
 
-insertRow = ["2801719006594692", "dummy","dummy" , str(male), str(wt)]
+    insertRow = ["2801719006594692", "dummy","dummy" , str(male), str(wt)]
 
-print(IinsertRow)
-sheet.append_row(insertRow)
+    print(insertRow)
+    sheet.append_row(insertRow)
 
 if responded == 1 :
     # UPDATE MODEL
