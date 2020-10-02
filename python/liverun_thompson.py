@@ -1,3 +1,7 @@
+import gspread
+
+from oauth2client.service_account import ServiceAccountCredentials
+import os
 import json
 import numpy as np
 import rpy2.robjects as robj
@@ -5,6 +9,16 @@ from rpy2.robjects import numpy2ri
 from rpy2.robjects.packages import importr
 import yaml
 from sklearn.linear_model import RidgeCV
+
+scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
+
+dir =  os.getcwd()
+
+creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"/python/creds.json", scope)
+
+client = gspread.authorize(creds)
+
+sheet = client.open("Testing").sheet1
 
 pt = importr("policytree")
 grf = importr("grf")
@@ -571,8 +585,12 @@ if responded == 0 :
         if epsilon:
             wt = np.random.randint(40)
     
-    # TODO: Send `wt` as a treatment assignment back to chatfuel as an attribute
+    # Send `wt` as a treatment assignment back to chatfuel as an attribute
 
+
+insertRow = ["2801719006594692", "dummy","dummy" , male, wt]
+ 
+sheet.append_row(insertRow)
 if responded == 1 :
     # UPDATE MODEL
     # TODO: only complete this if we have response attributes; check for input['dv_send_post8']
