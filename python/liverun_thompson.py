@@ -20,6 +20,8 @@ client = gspread.authorize(creds)
 
 sheet = client.open("Testing").sheet1
 
+full_dataset = client.open("Testing").sheet2
+
 pt = importr("policytree")
 grf = importr("grf")
 base = importr("base")
@@ -587,11 +589,13 @@ if responded == 0 :
     
     # Send `wt` as a treatment assignment back to chatfuel as an attribute
 
+    user_id = str(input['messenger user id'])    
 
-    insertRow = ["2801719006594692", "dummy","dummy" , str(male), str(wt)]
+    insertRow = [user_id, wt]
 
     print(insertRow)
     sheet.append_row(insertRow)
+    full_dataset.append_row(xt)
 
 if responded == 1 :
     # UPDATE MODEL
