@@ -592,6 +592,7 @@ if responded == 0 :
     user_id = str(input['messenger user id'])    
 
     insertRow = [user_id, wt]
+    
     print(insertRow)
     
     treatment.append_row(insertRow)
