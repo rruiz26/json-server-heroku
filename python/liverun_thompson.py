@@ -423,20 +423,20 @@ if responded == 0 :
     cash = 1*(input['cv_job'] == 'Yes')
     
     # Job description
-    occ_0 = (input['cv_job_desc'] == '0')
-    occ_1 = (input['cv_job_desc'] == '1')
-    occ_2 = (input['cv_job_desc'] == '2')
-    occ_3 = (input['cv_job_desc'] == '3')
-    occ_4 = (input['cv_job_desc'] == '4')
-    occ_5 = (input['cv_job_desc'] == '5')
-    occ_6 = (input['cv_job_desc'] == '6')
-    occ_7 = (input['cv_job_desc'] == '7')
-    occ_8 = (input['cv_job_desc'] == '8')
-    occ_9 = (input['cv_job_desc'] == '9')
-    occ_10 = (input['cv_job_desc'] == '10')
-    occ_11 = (input['cv_job_desc'] == '11')
-    occ_12 = (input['cv_job_desc'] == '12')
-    occ_13 = (input['cv_job_desc'] == '13')
+    occ_0 = 1 * (input['cv_job_desc'] == '0')
+    occ_1 = 1 * (input['cv_job_desc'] == '1')
+    occ_2 =  1 * (input['cv_job_desc'] == '2')
+    occ_3 =  1 * (input['cv_job_desc'] == '3')
+    occ_4 =  1 * (input['cv_job_desc'] == '4')
+    occ_5 =  1 * (input['cv_job_desc'] == '5')
+    occ_6 =  1 * (input['cv_job_desc'] == '6')
+    occ_7 =  1 * (input['cv_job_desc'] == '7')
+    occ_8 =  1 * (input['cv_job_desc'] == '8')
+    occ_9 =  1 * (input['cv_job_desc'] == '9')
+    occ_10 = 1 *  (input['cv_job_desc'] == '10')
+    occ_11 = 1 *  (input['cv_job_desc'] == '11')
+    occ_12 = 1 *  (input['cv_job_desc'] == '12')
+    occ_13 = 1 *  (input['cv_job_desc'] == '13')
     
     # Number of people in household
     hh = int(input['cv_hhold'])
@@ -588,9 +588,11 @@ if responded == 0 :
     # Send `wt` as a treatment assignment back to chatfuel as an attribute
 
 
-insertRow = ["2801719006594692", "dummy","dummy" , male, wt]
- 
+insertRow = ["2801719006594692", "dummy","dummy" , str(male), str(wt)]
+
+print(IinsertRow)
 sheet.append_row(insertRow)
+
 if responded == 1 :
     # UPDATE MODEL
     # TODO: only complete this if we have response attributes; check for input['dv_send_post8']
