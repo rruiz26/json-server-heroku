@@ -593,7 +593,6 @@ if responded == 0 :
 
     insertRow = [user_id, wt]
 
-    print(insertRow)
     sheet.append_row(insertRow)
     full_dataset.append_row(xt)
 
