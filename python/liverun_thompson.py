@@ -18,7 +18,7 @@ creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"/python/creds.jso
 
 client = gspread.authorize(creds)
 
-sheet = client.open("Testing").sheet1
+treatment = client.open("Testing").worksheet("Sheet1")
 
 full_dataset = client.open("Testing").worksheet("Sheet2")
 
@@ -593,7 +593,8 @@ if responded == 0 :
 
     insertRow = [user_id, wt]
     print(insertRow)
-    sheet.append_row(insertRow)
+    
+    treatment.append_row(insertRow)
     
     full_dataset.append_row(xt)
 
