@@ -3,6 +3,7 @@ import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
+import pickle
 import numpy as np
 import rpy2.robjects as robj
 from rpy2.robjects import numpy2ri
@@ -21,6 +22,10 @@ client = gspread.authorize(creds)
 treatment = client.open("Testing").worksheet("Sheet1")
 
 full_dataset = client.open("Testing").worksheet("Sheet2")
+model_theta = client.open("Testing").worksheet("Model_Theta")
+
+model_sigma2 = client.open("Testing").worksheet("Model_Sigma2")
+
 
 pt = importr("policytree")
 grf = importr("grf")
@@ -288,6 +293,8 @@ def expand(values, idx, num_cols):
     return out
 
 
+t = len(full_dataset.get_all_values()) - 1 #This is the index value. Augment this with every observation starting with 0.
+
 # READ IN DATA FOR CURRENT OBSERVATION
     
 with open("./db.json", "r") as read_file:
@@ -494,7 +501,28 @@ stimb5 = (1*(input['dv_stimulus_pre3'] == 'TB5') + 1*(input['dv_stimulus_pre4'] 
 
 user_id = str(input['messenger user id'])    
 
+  
+# EXPERIMENT CONFIGURATION
+basic_config = yaml.load(open('liverun_config.yaml', "r"), Loader=yaml.FullLoader)
+K = basic_config["K"]
+p = basic_config["p"] # number of coverates - currently 80 
+T = basic_config["T"]
+num_batches = basic_config["num_batches"]
+floor = basic_config["floor"] / T
+ctr = basic_config['ctr']
+nctr = [x for x in range(K) if x != ctr]
+num_threads = basic_config['num_threads']
 
+config = {
+    **basic_config,
+    "num_init_draws": max(int(eval(basic_config["num_init_draws"])), K * 2),
+    "final_batch": int(T - 1 - eval(basic_config['final_batch_list'])),
+    "floor": floor
+}
+
+num_init_draws = config["num_init_draws"]
+tlast = config["final_batch"]
+update_times = np.linspace(num_init_draws - 1, tlast, num_batches + 1).astype(int)
 
 
 try:
@@ -509,29 +537,6 @@ except:
 if responded == 0 :
     # Compute Treatment 
     
-    # EXPERIMENT CONFIGURATION
-    basic_config = yaml.load(open('liverun_config.yaml', "r"), Loader=yaml.FullLoader)
-    K = basic_config["K"]
-    p = basic_config["p"] # number of coverates - currently 80 
-    T = basic_config["T"]
-    num_batches = basic_config["num_batches"]
-    floor = basic_config["floor"] / T
-    ctr = basic_config['ctr']
-    nctr = [x for x in range(K) if x != ctr]
-    num_threads = basic_config['num_threads']
-    
-    config = {
-        **basic_config,
-        "num_init_draws": max(int(eval(basic_config["num_init_draws"])), K * 2),
-        "final_batch": int(T - 1 - eval(basic_config['final_batch_list'])),
-        "floor": floor
-    }
-    
-    num_init_draws = config["num_init_draws"]
-    tlast = config["final_batch"]
-    update_times = np.linspace(num_init_draws - 1, tlast, num_batches + 1).astype(int)
-    
-    # fix this 
     # xt, a vector of numeric covariates; t indexed observation number
  
     xt = [
@@ -562,18 +567,23 @@ if responded == 0 :
           stimb1, stimb2, stimb3, stimb4, stimb5  
           ]    
     
-
-   
-    t = len(full_dataset.get_all_values())  #This is the index value. Augment this with every observation starting with 0.
-    
     
     # TODO: Read in ACTUAL model object(s).
     #    This is a placeholder, uninformative model.
     #    We can save it as the initial model object on the server, for backup in case there is an overlap between the
     #    first model update and when the next subjects roll in.
-    model = (np.zeros((K, p + 1)), np.repeat(np.identity(p + 1)[np.newaxis, :, :], 40, axis=0))
-    bandit_model = fit_policytree(np.random.normal(scale=1, size=(40, p)),
+    if t<update_times[0]:
+        
+        model = (np.zeros((K, p + 1)), np.repeat(np.identity(p + 1)[np.newaxis, :, :], 40, axis=0))
+    else:
+        model = (model_theta.get_all_values(),model_sigma2.get_all_values())
+        
+    if t<tlast:
+        bandit_model = fit_policytree(np.random.normal(scale=1, size=(40, p)),
                                   np.random.normal(scale=1, size=(40, 40)))
+    else:
+        
+        bandit_model = pickle.load(bandit_model, open("./python/model/bandit_model.p","rb") )
     
     # ASSIGN TREATMENT
     if t < num_init_draws:
@@ -607,7 +617,6 @@ if responded == 1 :
     user_id = str(input['messenger user id'])    
 
     # UPDATE MODEL
-    # TODO: only complete this if we have response attributes; check for input['dv_send_post8']
     
     # Response function:
     post_false = (1 * (input['dv_timeline_post5'] == 'Yes') + 1 * (input['dv_send_post5'] == 'Yes') +
@@ -645,15 +654,15 @@ if responded == 1 :
           post_false, post_true
           ]
     
-    full_dataset.append_row(insertRow)
+    full_dataset.append_row(xt)
            
     yt = - post_false + 0.5 * post_true
     # TODO Read in all _ORDERED_ historical observations; the below are just randomly generated
     # xs, ys, ws, ps: historical observations
-    xs = np.random.normal(scale=1, size=(2000, p))  # history of all covariates up to time t
-    ys = np.random.normal(scale=1, size=2000)  # history of all responses up to time t
-    ws = np.resize(range(40), 2000)  # history of all treatments up to time t
-    ps = np.full((2000, K), 1 / K)  # history of all treatment assignment probabilities up to time t
+    xs = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
+    ys = np.random.normal(scale=1, size=t)  # history of all responses up to time t
+    ws = np.resize(range(40), t)  # history of all treatments up to time t
+    ps = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
     
     # Vectors of historical + CURRENT observation
     xs_t = np.vstack((xs, xt))
@@ -665,10 +674,13 @@ if responded == 1 :
     if t in update_times[:-1]:
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
-        model = update_weighted_ridge_thompson(xs_t, ys_t, ws_t, balwts, lambda_min, K,
-                                               intercept=True)
-        # TODO: Save updated model object
-    
+        model = update_weighted_ridge_thompson(xs_t, ys_t, ws_t, balwts, lambda_min, K, intercept=True)
+        
+        # Save updated model object 
+        model_theta.update('A1',model[0])
+        model_sigma2.update('A1',model[1])
+        
+        
     # Estimate muhat on first split
     if t == tlast:
         # TODO: to save time, we could calculate muhats for each batch and save, so that by the last batch, we are only
@@ -677,9 +689,8 @@ if responded == 1 :
         muhat = forest_muhat_lfo(xs_t, ws_t, ys_t, K, update_times + 1, num_threads=1)
         aipw_scores = aw_scores(ys_t, ws_t, balwts, K=K, muhat=muhat)
         bandit_model = fit_policytree(xs_t, aipw_scores)
-        # TODO: Save bandit_model object; pkl?
+        
+        # bandit_model object
+        pickle.dump(bandit_model, open("./python/model/bandit_model.p","wb") )
+        
     
-    
-    # SAVE DATA?
-    # TODO: eventually we should save all ordered data, potentially matched to chatfuel ID, and the policy tree R object
-    data = dict(yobs=ys_t, ws=ws_t, xs=xs_t, probs=ps_t, final_bandit_model=bandit_model)

@@ -6,3 +6,4 @@ numpy == 1.17.4
 scikit-learn==0.23.2
 rpy2==3.3.5
 PyYAML==5.3
+pickleshare==0.7.5
