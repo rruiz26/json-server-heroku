@@ -592,8 +592,9 @@ if responded == 0 :
     user_id = str(input['messenger user id'])    
 
     insertRow = [user_id, wt]
-
+    print(insertRow)
     sheet.append_row(insertRow)
+    
     full_dataset.append_row(xt)
 
 if responded == 1 :
