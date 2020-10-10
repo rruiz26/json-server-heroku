@@ -535,8 +535,11 @@ except:
     treated = 0
 
     
+print("at line 538")
 
 if treated == 0 :
+
+print("at line 542")
 
     full_dataset = client.open("Testing").worksheet("Full_Data")
     dataset_df = pd.DataFrame(full_dataset.get_all_values())
@@ -625,6 +628,7 @@ if treated == 0 :
     treatment.append_row(insertRow)
     treatment_probs.append_row(insertProbs)
 if treated == 1 :
+    print("at line 631")
 
     full_dataset = client.open("Testing").worksheet("Full_Data")
 
