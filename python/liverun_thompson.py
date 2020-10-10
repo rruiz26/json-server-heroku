@@ -1,5 +1,7 @@
 import gspread
 
+from datetime import datetime
+import pandas as pd 
 from oauth2client.service_account import ServiceAccountCredentials
 import os
 import json
@@ -20,8 +22,9 @@ creds = ServiceAccountCredentials.from_json_keyfile_name(dir +"/python/creds.jso
 client = gspread.authorize(creds)
 
 treatment = client.open("Testing").worksheet("Sheet1")
+treatment_probs = client.open("Testing").worksheet("Treatment_Probs")
 
-full_dataset = client.open("Testing").worksheet("Sheet2")
+
 model_theta = client.open("Testing").worksheet("Model_Theta")
 
 model_sigma2 = client.open("Testing").worksheet("Model_Sigma2")
@@ -293,7 +296,6 @@ def expand(values, idx, num_cols):
     return out
 
 
-t = len(full_dataset.get_all_values()) - 1 #This is the index value. Augment this with every observation starting with 0.
 
 # READ IN DATA FOR CURRENT OBSERVATION
     
@@ -504,7 +506,7 @@ user_id = str(input['messenger user id'])
   
 # EXPERIMENT CONFIGURATION
 basic_config = yaml.load(open('liverun_config.yaml', "r"), Loader=yaml.FullLoader)
-K = basic_config["K"]
+K = basic_config["K"] # Number of arms (including control)
 p = basic_config["p"] # number of coverates - currently 80 
 T = basic_config["T"]
 num_batches = basic_config["num_batches"]
@@ -527,14 +529,25 @@ update_times = np.linspace(num_init_draws - 1, tlast, num_batches + 1).astype(in
 
 try:
     input['dv_send_post8']
-    responded = 1
+    treated = 1
 except:
     # then we compute the individals treatment 
-    responded = 0
+    treated = 0
 
     
 
-if responded == 0 :
+if treated == 0 :
+
+    full_dataset = client.open("Testing").worksheet("Full_Data")
+    dataset_df = pd.DataFrame(full_dataset.get_all_values())
+    dataset_df = dataset_df.iloc[1:]
+    dataset_df = dataset_df.reset_index(drop=True)
+
+
+    #This is the index value. Augment this with every observation starting with 0.
+    #observation number 
+    t = dataset_df.shape[0] + 1 
+    
     # Compute Treatment 
     
     # xt, a vector of numeric covariates; t indexed observation number
@@ -605,17 +618,17 @@ if responded == 0 :
             wt = np.random.randint(40)
     
     # Send `wt` as a treatment assignment back to chatfuel as an attribute
-
     insertRow = [user_id, wt]
-    
+    insertProbs = [user_id] + pt
     print(insertRow)
     print(t)
-    
     treatment.append_row(insertRow)
-    
-if responded == 1 :
-    user_id = str(input['messenger user id'])    
+    treatment_probs.append_row(insertProbs)
+if treated == 1 :
 
+    full_dataset = client.open("Testing").worksheet("Full_Data")
+
+    
     # UPDATE MODEL
     
     # Response function:
@@ -623,7 +636,11 @@ if responded == 1 :
                   1 * (input['dv_timeline_post6'] == 'Yes') + 1 * (input['dv_send_post6'] == 'Yes'))
     post_true = (1 * (input['dv_timeline_post7'] == 'Yes') + 1 * (input['dv_send_post7'] == 'Yes') +
                  1 * (input['dv_timeline_post8'] == 'Yes') + 1 * (input['dv_send_post8'] == 'Yes'))
- 
+           
+    yt = - post_false + 0.5 * post_true
+    
+    #timestamp
+    time_stamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     xt = [
           user_id,
           male, 
@@ -651,24 +668,56 @@ if responded == 1 :
           stimf1, stimf2, stimf3, stimf4, stimf5, stimf6, stimf7, stimf8, stimf9, stimf10, stimf11, stimf12, stimf13, stimf14, stimf15, stimf16,
           stimt1, stimt2, stimt3, stimt4, stimt5, stimt6,
           stimb1, stimb2, stimb3, stimb4, stimb5,
-          post_false, post_true
+          post_false, post_true, yt
+          time_stamp,t 
           ]
     
     full_dataset.append_row(xt)
-           
-    yt = - post_false + 0.5 * post_true
+        
+    
+    
+    #redownload dataset with new observiations 
+    full_dataset = client.open("Testing").worksheet("Full_Data")   
+    dataset_df = pd.DataFrame(full_dataset.get_all_values())
+    dataset_df = dataset_df.iloc[1:]
+    dataset_df = dataset_df.reset_index(drop=True)
+
+    #This is the index value. Augment this with every observation starting with 0.
+    #observation number 
+    t = dataset_df.shape[0] 
+    
+    #make dataframe of treatment probabilities 
+    full_dataset = client.open("Testing").worksheet("Full_Data")   
+    treatment_probs_df = pd.DataFrame(treatment_probs.get_all_values())
+    treatment_probs_df.drop(columns=0,inplace = True)
+
     # TODO Read in all _ORDERED_ historical observations; the below are just randomly generated
     # xs, ys, ws, ps: historical observations
-    xs = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
-    ys = np.random.normal(scale=1, size=t)  # history of all responses up to time t
-    ws = np.resize(range(40), t)  # history of all treatments up to time t
-    ps = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
     
+    #this is the number of columns to the left of our relevent covariates 
+    off_set = 0
+    # column location of treatments 
+    index = off_set+p + 3 
+    treatment_index = 4
+    # p: number of covariates
+    xs_t = dataset_df.iloc[:,off_set:off_set+p] # history of all covariates up to time t 
+    ys_t = dataset_df.iloc[:,index] # history of all responses up to time t
+    ws_t = dataset_df.iloc[:,treatment_index] #ask molly - what is the treatment variable???
+    ps_t = treatment_probs_df  # history of all treatment assignment probabilities up to time t
+  
+    
+    ##############
+    #xs = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
+    #ys = np.random.normal(scale=1, size=t)  # history of all responses up to time t
+    #ws = np.resize(range(40), t)  # history of all treatments up to time t
+    #ps = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
+    
+    #(xs,ys,ws,ps)
     # Vectors of historical + CURRENT observation
-    xs_t = np.vstack((xs, xt))
-    ys_t = np.concatenate((ys, [yt]))
-    ws_t = np.concatenate((ws, [wt]))
-    ps_t = np.vstack((ps, pt))
+    #xs_t = np.vstack((xs, xt))
+    #ys_t = np.concatenate((ys, [yt])) 
+    #ws_t = np.concatenate((ws, [wt]))
+    #ps_t = np.vstack((ps, pt))
     balwts = 1 / collect(ps_t, ws_t)
     
     if t in update_times[:-1]:
