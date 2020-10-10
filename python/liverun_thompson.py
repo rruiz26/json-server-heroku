@@ -669,7 +669,7 @@ if treated == 1 :
           stimt1, stimt2, stimt3, stimt4, stimt5, stimt6,
           stimb1, stimb2, stimb3, stimb4, stimb5,
           post_false, post_true, yt
-          time_stamp,t 
+          time_stamp 
           ]
     
     full_dataset.append_row(xt)
