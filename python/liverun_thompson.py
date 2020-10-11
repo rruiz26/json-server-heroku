@@ -127,7 +127,7 @@ def apply_floor(a, amin):
     return new - c * individual_slack
 
 
-def collect(a, indices):
+def collect_old(a, indices):
     assert len(a) == len(indices)
     rows = np.arange(len(a))
     if np.ndim(indices) == 1:
@@ -135,7 +135,16 @@ def collect(a, indices):
     else:
         out = np.column_stack([a[rows, i] for i in indices.T])
     return out
-
+    
+def collect(a, indices):
+    assert len(a) == len(indices)
+    rows = np.arange(len(a))
+    if len(indices) == 1:
+        out = int(a.iloc[0, int(indices[0])-1])
+    else:
+        out = np.column_stack([a.iloc[n,int(i)-1] for n,i in zip(np.arange(len(indices)),indices)])
+    return out
+        out = np.column_stack([a.iloc[:,int(i)-1] for n,i in zip(np.arange(len(indices)),indices)])
 
 def fit_ridge_lambda(xs, yobs, alpha=None):
     """
@@ -727,7 +736,9 @@ if treated == 1 :
     #ps_t = np.vstack((ps, pt))
     print(len(ps_t))
     print(len(ws_t))
-    balwts = 1 / collect(ps_t, ws_t)
+    #ask about what balwts is and if we implemented it wrong 
+    balwts = collect(ps_t, ws_t)
+    #balwts = 1 / collect(ps_t, ws_t)
     
     if t in update_times[:-1]:
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
