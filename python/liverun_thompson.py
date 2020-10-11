@@ -137,7 +137,7 @@ def collect_old(a, indices):
     return out
     
 def collect(a, indices):
-    if type(a) == numpy.ndarray:
+    if type(a) == np.ndarray:
         a = pd.DataFrame(a)
     assert len(a) == len(indices)
     rows = np.arange(len(a))
