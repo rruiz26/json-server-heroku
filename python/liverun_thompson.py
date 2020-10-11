@@ -722,17 +722,17 @@ if treated == 1 :
   
     
     ##############
-    xs = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
-    ys = np.random.normal(scale=1, size=t)  # history of all responses up to time t
-    ws = np.resize(range(40), t)  # history of all treatments up to time t
-    ps = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
+    xs_t = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
+    ys_t = np.random.normal(scale=1, size=t)  # history of all responses up to time t
+    ws_t = np.resize(range(40), t)  # history of all treatments up to time t
+    ps_t = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
     
     #(xs,ys,ws,ps)
     #Vectors of historical + CURRENT observation
-    xs_t = np.vstack((xs, xt))
-    ys_t = np.concatenate((ys, [yt])) 
-    ws_t = np.concatenate((ws, [wt]))
-    ps_t = np.vstack((ps, pt))
+    #xs_t = np.vstack((xs, xt))
+    #ys_t = np.concatenate((ys, [yt])) 
+    #ws_t = np.concatenate((ws, [wt]))
+    #ps_t = np.vstack((ps, pt))
     print(len(ps_t))
     print(len(ws_t))
     #ask about what balwts is and if we implemented it wrong 
