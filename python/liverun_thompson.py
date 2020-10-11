@@ -727,8 +727,8 @@ if treated == 1 :
     ws = np.resize(range(40), t)  # history of all treatments up to time t
     ps = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
     
-    (xs,ys,ws,ps)
-     Vectors of historical + CURRENT observation
+    #(xs,ys,ws,ps)
+    #Vectors of historical + CURRENT observation
     xs_t = np.vstack((xs, xt))
     ys_t = np.concatenate((ys, [yt])) 
     ws_t = np.concatenate((ws, [wt]))
