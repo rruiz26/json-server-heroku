@@ -140,7 +140,7 @@ def collect(a, indices):
     assert len(a) == len(indices)
     rows = np.arange(len(a))
     if len(indices) == 1:
-        out = int(a.iloc[0, int(indices[0])-1])
+        out = float(a.iloc[0, int(indices[0])-1])
     else:
         out = np.column_stack([a.iloc[n,int(i)-1] for n,i in zip(np.arange(len(indices)),indices)])
     return out
@@ -543,7 +543,7 @@ except:
     treated = 0
 
     
-print("at line 538")
+print("at line 546")
 
 if treated == 0 :
 
@@ -640,7 +640,7 @@ if treated == 1 :
     wt = 1
     # track treatment 
     #wt = int(input['treatment'])
-    print("at line 631")
+    print("at line 643")
 
     full_dataset = client.open("Testing").worksheet("Full_Data")
 
