@@ -628,6 +628,10 @@ if treated == 0 :
     treatment.append_row(insertRow)
     treatment_probs.append_row(insertProbs)
 if treated == 1 :
+    #get rid of this after 
+    wt = 1
+    # track treatment 
+    #wt = int(input['treatment'])
     print("at line 631")
 
     full_dataset = client.open("Testing").worksheet("Full_Data")
@@ -647,7 +651,7 @@ if treated == 1 :
     time_stamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     xt = [
           user_id,
-          time_stamp,
+          time_stamp, wt,
           post_false, post_true, yt,
           male, 
           age,
@@ -698,13 +702,13 @@ if treated == 1 :
     # xs, ys, ws, ps: historical observations
     
     #this is the number of columns to the left of our relevent covariates 
-    off_set = 0
+    off_set = 5
     # column location of treatments 
-    index = off_set+p + 3 
-    treatment_index = 4
+    response_index = 5
+    treatment_index = 2
     # p: number of covariates
     xs_t = dataset_df.iloc[:,off_set:off_set+p] # history of all covariates up to time t 
-    ys_t = dataset_df.iloc[:,index] # history of all responses up to time t
+    ys_t = dataset_df.iloc[:,response_index] # history of all responses up to time t
     ws_t = dataset_df.iloc[:,treatment_index] #ask molly - what is the treatment variable???
     ps_t = treatment_probs_df  # history of all treatment assignment probabilities up to time t
   
