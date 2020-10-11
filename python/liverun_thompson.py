@@ -741,7 +741,7 @@ if treated == 1 :
     
     #if t in update_times[:-1]:
     testing = True
-     if testing==True:
+    if testing==True:
         print("constructing model")
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
