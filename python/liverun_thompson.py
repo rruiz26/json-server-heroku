@@ -144,7 +144,6 @@ def collect(a, indices):
     else:
         out = np.column_stack([a.iloc[n,int(i)-1] for n,i in zip(np.arange(len(indices)),indices)])
     return out
-        out = np.column_stack([a.iloc[:,int(i)-1] for n,i in zip(np.arange(len(indices)),indices)])
 
 def fit_ridge_lambda(xs, yobs, alpha=None):
     """
@@ -740,7 +739,10 @@ if treated == 1 :
     balwts = collect(ps_t, ws_t)
     #balwts = 1 / collect(ps_t, ws_t)
     
-    if t in update_times[:-1]:
+    #if t in update_times[:-1]:
+    testing = True
+     if testing==True:
+        print("constructing model")
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
         model = update_weighted_ridge_thompson(xs_t, ys_t, ws_t, balwts, lambda_min, K, intercept=True)
