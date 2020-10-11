@@ -647,6 +647,8 @@ if treated == 1 :
     time_stamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     xt = [
           user_id,
+          time_stamp,
+          post_false, post_true, yt,
           male, 
           age,
           ed, ed_flag,
@@ -671,9 +673,7 @@ if treated == 1 :
           strat_true0, strat_true1, strat_true2, strat_true3, strat_true4,
           stimf1, stimf2, stimf3, stimf4, stimf5, stimf6, stimf7, stimf8, stimf9, stimf10, stimf11, stimf12, stimf13, stimf14, stimf15, stimf16,
           stimt1, stimt2, stimt3, stimt4, stimt5, stimt6,
-          stimb1, stimb2, stimb3, stimb4, stimb5,
-          post_false, post_true, yt,
-          time_stamp 
+          stimb1, stimb2, stimb3, stimb4, stimb5 
           ]
     
     full_dataset.append_row(xt)
@@ -691,7 +691,6 @@ if treated == 1 :
     t = dataset_df.shape[0] 
     
     #make dataframe of treatment probabilities 
-    full_dataset = client.open("Testing").worksheet("Full_Data")   
     treatment_probs_df = pd.DataFrame(treatment_probs.get_all_values())
     treatment_probs_df.drop(columns=0,inplace = True)
 
@@ -722,6 +721,8 @@ if treated == 1 :
     #ys_t = np.concatenate((ys, [yt])) 
     #ws_t = np.concatenate((ws, [wt]))
     #ps_t = np.vstack((ps, pt))
+    print(len(ps_t))
+    print(len(ws_t))
     balwts = 1 / collect(ps_t, ws_t)
     
     if t in update_times[:-1]:
