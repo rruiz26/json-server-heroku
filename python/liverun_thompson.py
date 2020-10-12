@@ -145,7 +145,7 @@ def collect(a, indices):
         out = float(a.iloc[0, int(indices[0])-1])
     else:
         out = np.column_stack([a.iloc[n,int(i)-1] for n,i in zip(np.arange(len(indices)),indices)])
-    return out
+    return out[0]
 
 def fit_ridge_lambda(xs, yobs, alpha=None):
     """
@@ -738,7 +738,7 @@ if treated == 1 :
     print(len(ps_t))
     print(len(ws_t))
     #ask about what balwts is and if we implemented it wrong 
-    balwts = collect(ps_t, ws_t)
+    balwts = 1/ collect(ps_t, ws_t)
     #balwts = 1 / collect(ps_t, ws_t)
     
     #if t in update_times[:-1]:
