@@ -304,6 +304,29 @@ def expand(values, idx, num_cols):
     for i, (j, v) in enumerate(zip(idx, values)):
         out[i, j] = v
     return out
+    
+def iter_pd(df):
+    #for val in df.columns:
+    #    yield val
+    for row in df.to_numpy():
+        for val in row:
+            if pd.isna(val):
+                yield ""
+            else:
+                yield val
+
+def pandas_to_sheets(pandas_df, sheet, clear = True):
+    # if numpy then make dataframe  
+    if type(pandas_df) == np.ndarray:
+        pandas_df = pd.DataFrame(pandas_df)    
+    # Updates all values in a workbook to match a pandas dataframe
+    if clear:
+        sheet.clear()
+    (row, col) = pandas_df.shape
+    cells = sheet.range("A1:{}".format(gspread.utils.rowcol_to_a1(row + 1, col)))
+    for cell, val in zip(cells, iter_pd(pandas_df)):
+        cell.value = val
+    sheet.update_cells(cells)
 
 
 
@@ -753,8 +776,8 @@ if treated == 1 :
         print(model[0])
         # Save updated model object 
         print("outputting to sheet")
-        model_theta.update('A1',model[0])
-        model_sigma2.update('A1',model[1])
+        pandas_to_sheets(model[0][0],model_theta)
+        pandas_to_sheets(model[1][0],model_sigma2)
         
         
     # Estimate muhat on first split
@@ -768,5 +791,4 @@ if treated == 1 :
         
         # bandit_model object
         pickle.dump(bandit_model, open("./python/model/bandit_model.p","wb") )
-        
-    
+            
