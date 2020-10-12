@@ -748,9 +748,9 @@ if treated == 1 :
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
         model = update_weighted_ridge_thompson(xs_t, ys_t, ws_t, balwts, lambda_min, K, intercept=True)
-        type(model)
-        type(model[0])        # should be numpy array
-        print(test)
+        print(type(model))
+        print(type(model[0]))        # should be numpy array
+        print(model[0])
         # Save updated model object 
         print("outputting to sheet")
         model_theta.update('A1',model[0])
