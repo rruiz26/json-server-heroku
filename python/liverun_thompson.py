@@ -12,6 +12,11 @@ from rpy2.robjects import numpy2ri
 from rpy2.robjects.packages import importr
 import yaml
 from sklearn.linear_model import RidgeCV
+import dropbox 
+
+#this is a short lived token make this permanent in a private dropbox 
+dropbox_token = "sl.AjcWaeXOmTk2xBG9Gj_uzumJgBZS7anxCjHn67LESqg8EFFDV9AdcTKUbSAtW0ClwNVMpHmzPi2xDdpEuAw3ipjn26G1tQxQX2crGuxvk20dJBjP3tUbr_aYJwySR2zH2BeKiwcHiaI"
+dbox = dropbox.Dropbox(dropbox_token)
 
 scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
 
@@ -23,11 +28,6 @@ client = gspread.authorize(creds)
 
 treatment = client.open("Testing").worksheet("Sheet1")
 treatment_probs = client.open("Testing").worksheet("Treatment_Probs")
-
-
-model_theta = client.open("Testing").worksheet("Model_Theta")
-
-model_sigma2 = client.open("Testing").worksheet("Model_Sigma2")
 
 
 pt = importr("policytree")
@@ -662,10 +662,8 @@ if treated == 0 :
     treatment_probs.append_row(insertProbs)
     
 if treated == 1 :
-    #get rid of this after 
-    wt = 1
     # track treatment 
-    #wt = int(input['treatment'])
+    wt = int(input['treatment'])
     print("at line 643")
 
     full_dataset = client.open("Testing").worksheet("Full_Data")
@@ -732,7 +730,6 @@ if treated == 1 :
     treatment_probs_df = pd.DataFrame(treatment_probs.get_all_values())
     treatment_probs_df.drop(columns=0,inplace = True)
 
-    # TODO Read in all _ORDERED_ historical observations; the below are just randomly generated
     # xs, ys, ws, ps: historical observations
     
     #this is the number of columns to the left of our relevent covariates 
@@ -740,6 +737,7 @@ if treated == 1 :
     # column location of treatments 
     response_index = 5
     treatment_index = 2
+    
     # p: number of covariates
     xs_t = dataset_df.iloc[:,off_set:off_set+p] # history of all covariates up to time t 
     ys_t = dataset_df.iloc[:,response_index] # history of all responses up to time t
@@ -757,7 +755,9 @@ if treated == 1 :
         
         with open('model.pickle','wb') as file:
             pickle.dump(model,file)
-            
+        with open('model.pickle','rb') as file:
+            dbox.files_upload(file.read(),"/model.pickle")
+     
     # Estimate muhat on first split
     if t == tlast:
         # TODO: to save time, we could calculate muhats for each batch and save, so that by the last batch, we are only
@@ -770,4 +770,6 @@ if treated == 1 :
         # saving bandit_model object
         with open('bandit_model.pickle','wb') as file:
             pickle.dump(bandit_model,file)
-                    
+        with open('bandit_model.pickle','rb') as file:
+            dbox.files_upload(file.read(),"/bandit_model.pickle")
+           
