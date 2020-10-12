@@ -625,15 +625,16 @@ if treated == 0 :
         
         model = (np.zeros((K, p + 1)), np.repeat(np.identity(p + 1)[np.newaxis, :, :], 40, axis=0))
     else:
-        model = (model_theta.get_all_values(),model_sigma2.get_all_values())
+        with open('model.pickle', 'rb') as file:
+            model = pickle.load(file)
+            
         
     if t<tlast:
         bandit_model = fit_policytree(np.random.normal(scale=1, size=(40, p)),
                                   np.random.normal(scale=1, size=(40, 40)))
     else:
-        
-        bandit_model = pickle.load(bandit_model, open("./python/model/bandit_model.p","rb") )
-    
+          with open('bandit_model.pickle','wb') as file:
+                bandit_model = pickle.load(file)    
     # ASSIGN TREATMENT
     if t < num_init_draws:
         wt = t % K
@@ -747,6 +748,7 @@ if treated == 1 :
   
     
     ##############
+    t= 100
     xs_t = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
     ys_t = np.random.normal(scale=1, size=t)  # history of all responses up to time t
     ws_t = np.resize(range(40), t)  # history of all treatments up to time t
@@ -760,26 +762,21 @@ if treated == 1 :
     #ps_t = np.vstack((ps, pt))
     print(len(ps_t))
     print(len(ws_t))
-    #ask about what balwts is and if we implemented it wrong 
+    #ask about what balwts is and if I remplimented it correctly 
     balwts = 1 / collect(ps_t, ws_t)
-    #balwts = 1 / collect(ps_t, ws_t)
     
     #if t in update_times[:-1]:
     testing = True
+    
     if testing==True:
         print("constructing model")
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
         model = update_weighted_ridge_thompson(xs_t, ys_t, ws_t, balwts, lambda_min, K, intercept=True)
-        print(type(model))
-        print(type(model[0]))        # should be numpy array
-        print(model[0])
-        # Save updated model object 
-        print("outputting to sheet")
-        pandas_to_sheets(model[0][0],model_theta)
-        pandas_to_sheets(model[1][0],model_sigma2)
         
-        
+        with open('model.pickle','wb') as file:
+            pickle.dump(model,file)
+            
     # Estimate muhat on first split
     if t == tlast:
         # TODO: to save time, we could calculate muhats for each batch and save, so that by the last batch, we are only
@@ -789,6 +786,7 @@ if treated == 1 :
         aipw_scores = aw_scores(ys_t, ws_t, balwts, K=K, muhat=muhat)
         bandit_model = fit_policytree(xs_t, aipw_scores)
         
-        # bandit_model object
-        pickle.dump(bandit_model, open("./python/model/bandit_model.p","wb") )
-            
+        # saving bandit_model object
+        with open('bandit_model.pickle','wb') as file:
+            pickle.dump(bandit_model,file)
+                    
