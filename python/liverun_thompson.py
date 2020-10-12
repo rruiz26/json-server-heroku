@@ -657,10 +657,10 @@ if treated == 0 :
     # Send `wt` as a treatment assignment back to chatfuel as an attribute
     insertRow = [user_id, wt]
     insertProbs = [user_id] + pt
-    print(insertRow)
     print(t)
     treatment.append_row(insertRow)
     treatment_probs.append_row(insertProbs)
+    
 if treated == 1 :
     #get rid of this after 
     wt = 1
@@ -745,30 +745,11 @@ if treated == 1 :
     ys_t = dataset_df.iloc[:,response_index] # history of all responses up to time t
     ws_t = dataset_df.iloc[:,treatment_index] #ask molly - what is the treatment variable???
     ps_t = treatment_probs_df  # history of all treatment assignment probabilities up to time t
-  
     
-    ##############
-    t= 100
-    xs_t = np.random.normal(scale=1, size=(t, p))  # history of all covariates up to time t
-    ys_t = np.random.normal(scale=1, size=t)  # history of all responses up to time t
-    ws_t = np.resize(range(40), t)  # history of all treatments up to time t
-    ps_t = np.full((t, K), 1 / K)  # history of all treatment assignment probabilities up to time t
-    
-    #(xs,ys,ws,ps)
-    #Vectors of historical + CURRENT observation
-    #xs_t = np.vstack((xs, xt))
-    #ys_t = np.concatenate((ys, [yt])) 
-    #ws_t = np.concatenate((ws, [wt]))
-    #ps_t = np.vstack((ps, pt))
-    print(len(ps_t))
-    print(len(ws_t))
     #ask about what balwts is and if I remplimented it correctly 
     balwts = 1 / collect(ps_t, ws_t)
     
-    #if t in update_times[:-1]:
-    testing = True
-    
-    if testing==True:
+    if t in update_times[:-1]:    
         print("constructing model")
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
