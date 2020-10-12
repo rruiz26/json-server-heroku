@@ -738,7 +738,7 @@ if treated == 1 :
     print(len(ps_t))
     print(len(ws_t))
     #ask about what balwts is and if we implemented it wrong 
-    balwts = 1/ collect(ps_t, ws_t)
+    balwts = 1 / collect(ps_t, ws_t)
     #balwts = 1 / collect(ps_t, ws_t)
     
     #if t in update_times[:-1]:
@@ -748,8 +748,10 @@ if treated == 1 :
         lambda_min = fit_ridge_lambda(xs_t, ys_t)
     
         model = update_weighted_ridge_thompson(xs_t, ys_t, ws_t, balwts, lambda_min, K, intercept=True)
-        
+        type(model)
+        type(model[0]) # should be numpy array
         # Save updated model object 
+        print("outputting to sheet")
         model_theta.update('A1',model[0])
         model_sigma2.update('A1',model[1])
         
