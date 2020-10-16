@@ -741,10 +741,10 @@ if treated == 1 :
     # p: number of covariates
     xs_t = dataset_df.iloc[:,off_set:off_set+p] # history of all covariates up to time t 
     ys_t = dataset_df.iloc[:,response_index] # history of all responses up to time t
-    ws_t = dataset_df.iloc[:,treatment_index] #ask molly - what is the treatment variable???
+    ws_t = dataset_df.iloc[:,treatment_index] # Treatment variable
     ps_t = treatment_probs_df  # history of all treatment assignment probabilities up to time t
     
-    #ask about what balwts is and if I remplimented it correctly 
+    
     balwts = 1 / collect(ps_t, ws_t)
     
     if t in update_times[:-1]:    
