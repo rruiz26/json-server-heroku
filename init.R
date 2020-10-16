@@ -1,9 +1,9 @@
 # init.R
 #
-# Example R code to install packages if not already installed
+# This file tells heroku to start up the server with R and which packages to install
 
 
-
+#list packages here
 my_packages = c("base","grf", "policytree")
 
 install_if_missing = function(p) {

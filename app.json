@@ -1,8 +1,8 @@
 {
-  "name": "EECS 130 Sample REST API",
+  "name": "chatfuel - Json-server",
   "version": "1.0.0",
-  "description": "Simple json-base database to deploy to Heroku",
-  "repository": "https://github.com/eecs130/json-server-heroku",
+  "description": "Simple json-base database to deploy to Heroku to be used in conjuction with a chatfuel",
+  "repository": "https://github.com/gsbDBI/facebook_adaptive",
   "keywords": ["json-server,heroku, node, REST API"],
-  "author": "Jesper Orb"
+  "author": "Jesper Orb - Forked by Ricardo Ruiz"
 }
