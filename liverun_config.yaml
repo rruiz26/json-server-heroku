@@ -1,9 +1,6 @@
 ## DGP ##
 # Number of arms (including control)
 K: 40
-# Number of covariates
-#p: 80
-p: 76
 # Gaussian noise to rewards
 noise_std: 1
 # Control INDEX
@@ -12,9 +9,9 @@ ctr: 0
 # Experiment length
 T: 4000
 # Number of initial draws (initial batch size)
-num_init_draws: T//5
+num_init_draws: 800
 # Final batch
-final_batch_list: T//5
+final_batch: 800
 # Number of batches between first and final batch
 num_batches: 3
 # probability floor
@@ -25,3 +22,5 @@ floor: 0.2
 polydecay_rate: 0
 ## SHERLOCK CONFIG ##
 num_threads: 1
+# Number of monte carlo simulations
+num_mc: 1000
